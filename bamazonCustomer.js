@@ -9,3 +9,25 @@
 
 // This means updating the SQL database to reflect the remaining quantity.
 // Once the update goes through, show the customer the total cost of their purchase.
+
+var inquirer = require('inquirer');
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: '',
+  database: 'bamazon'
+});
+ 
+connection.connect(function(err) {
+  if (err) {
+    console.error('error connecting: ' + err.stack);
+    return;
+  }
+ 
+  console.log('HUZZAH! Connected as id ' + connection.threadId);
+});
+
+
