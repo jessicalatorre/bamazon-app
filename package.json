@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jessicalatorre/bamazon-app#readme",
   "dependencies": {
+    "colors": "^1.2.5",
     "inquirer": "^5.2.0",
     "mysql": "^2.15.0"
   }
