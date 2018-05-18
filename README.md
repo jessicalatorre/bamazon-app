@@ -8,7 +8,7 @@
 
 <h3>Demo</h3>
 
-<p>Here's a brief video demonstration of how the app works: https://drive.google.com/drive/my-drive</p>
+<p>Here's a brief video demonstration of how the app works: https://drive.google.com/file/d/1GkQvX9QOzNxNoGCHMPdKzDn7IThAA1Dj/view?usp=sharing</p>
 
 <h3>Code</h3>
 
