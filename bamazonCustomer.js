@@ -10,10 +10,11 @@
 // This means updating the SQL database to reflect the remaining quantity.
 // Once the update goes through, show the customer the total cost of their purchase.
 
-//1 - est connection to database
-//2 - now let's query data from database (using JS). NOTE: Console.log to display list of options for customer. This also ensure you're able to return results from database, but after this you'll need to clean up results, so you're able to disply a more simple list to customers
-//3 - create a function using inquirer documentation that prompts customer for product specifications. this function WILL be called back in the connection.query function (NESTING FUNCTIONS)
-//4 
+//1 - Establish connection to database
+//2 - Display products - Now let's query data from database (using JS). NOTE: Console.log to display list of options for customer. This also ensure you're able to return results from database, but after this we'll need to clean up results, so we're able to disply a more simple list to customers. We'll display the list then ask customer what they'll order.
+//3 - Asking customer for Order - create a function using inquirer documentation that prompts customer for product specifications. This function WILL be called back in the connection.query function (NESTING FUNCTIONS)
+//4 - Checker logic - created function to ensure customer inputs correct id (customerPrompt)and function to check quanity in stock (getItemById)
+//5 - Continue Shopping Question - created another function to ask if customer wants to continue shopping
 
 var inquirer = require('inquirer');
 var mysql = require('mysql');
@@ -23,7 +24,7 @@ var colors = require('colors');
 var purchaseQuestions = [
     {
         name: 'buyID', // this same as var name = 'buyID" this is what the inquirer module is doing based on this syntax
-        message: 'Enter id of the item you wish to purchase'
+        message: 'Please Enter the ID of the item you wish to purchase'
     },
     {
         name: 'purchaseQuantity',
@@ -33,7 +34,13 @@ var purchaseQuestions = [
     //     name: 'continueShopping', //result is pushed into var called continue shopping
     //     message:"What is the id of the next item you'd like to purchase?"
     // }
+]
 
+var continueShoppingQuestion = [
+    {
+        name: "continue",
+        message: "Would you like to continue shopping (y/n)?"
+    }
 ]
 
 //global variable for products to intialize variable
@@ -55,7 +62,7 @@ connection.connect(function (err) {
         return;
     }
 
-    console.log('HUZZAH! Connected as id ' + connection.threadId);
+    console.log(('Welcome! You\'re connected to the Bamazon Camping Store under ID: ' + connection.threadId + ' Here\'s a list of items available for purchase').blue);
 });
 
 //Step 2 - return results and console results and abbreviated list for customer
@@ -66,6 +73,7 @@ connection.connect(function (err) {
 connection.query('SELECT * FROM products', function (err, results, fields) {
     if (err) throw error;
     // console.log(results); //first console log - this is logged as an array of results
+
     //logic to simplify what needs to be displayed to customers
     //use for loop to do this; can also use for each.
     //before we do, assign results to products var since it was initialized as null. Assigning it globally as null allows us to use it any function we want to, but we must assign it the correct parameter we're trying to return in each function (as it makes sense);
@@ -86,14 +94,29 @@ function customerPrompt() {
         console.log(answers) //console log returned: { buyID: '4545666', purchaseQuanity: '2' }
         //helper function
         var item = getItemById(answers.buyID); //answers.buyID is the customer input. we pass this into the getItemById function to ensure product ID is valid so create if statment to check quantity in stock
+
+        // console.log(item);
+
         if(item){ //if true, seach for quanity. True means anything not undefined, null, false, anything smaller than 0.
-            var stockQuantity = item.stock_quantity;
-            if(stockQuantity < answers.purchaseQuantity) {
+            var stockQuantityFoo = item.stock_quantity;//we create temp var to store item stock quantities. Why because we'll use this variable a few more times. but can also put this into the if statement
+            if(stockQuantityFoo < answers.purchaseQuantity) {
                 console.log('insufficient quantity'.red);
+                customerPrompt(); // //Recursive Function - meaning we cb same function in case a customer types in an incorrect prodcut id and we need to run the function once more to ask which item the customer wants to purchase
+            } else {
+                stockQuantityFoo = stockQuantityFoo - answers.purchaseQuantity;
+                //sql query
+                var updateQueryStg = "UPDATE products SET stock_quantity = '" + stockQuantityFoo + "'WHERE item_id = '" + item.item_id + "'";
+                connection.query(updateQueryStg, function (error, results, fields){
+                    if(error) throw error;
+                    console.log("Thanks for your purchase!");
+                    console.log("Total cost: " + item.price *answers.purchaseQuantity + "$");
+                    continuePrompt();
+                })
             }
         } else {
             console.log('Please enter a valid item id'.red);
-            customerPrompt();
+            customerPrompt(); //Recursive Function - again
+    
         }
     });
 }
@@ -107,6 +130,17 @@ function getItemById(id) {
     }
     //NOTE: If customer inputs incorrect id it will return null
     return null;
+}
+
+function continuePrompt () {
+    inquirer.prompt(continueShoppingQuestion).then(function(answers){
+        if(answers.continue.toLowerCase() == 'y') {
+            customerPrompt(); //if customer answers yes, than aske shopping questions again
+        } else {
+            console.log('Thanks you again for your business! We\'ll ship your items in the coming days'.blue);
+            connection.end();
+        }
+    });
 }
 
 
