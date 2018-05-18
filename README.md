@@ -8,6 +8,6 @@
 
 <p>Here's a brief video demonstration of how the app works: https://drive.google.com/drive/my-drive</p>
 
-<p>Feel free to look at at my repo to take a closer look at the JavaScript logic</p>
+<p>Feel free to look at at my bamazonCustomer.js to take a closer look at the JavaScript code: https://github.com/jessicalatorre/bamazon-app/blob/master/bamazonCustomer.js</p>
 
 
