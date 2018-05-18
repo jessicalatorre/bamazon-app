@@ -4,7 +4,7 @@
 
 <h3>Node Module</h3>
 
-<p> The Inquirer npm package enables customers to be prompted for their desired purchase once Node is running. The My-SQL module allows for querying the Bamazon database via JavaScript based on the product ID\(s\) and the quantities customers type when making purchases. Lastly, the Colors npm package is also used to give customers a more visually appealing experience.</p>
+<p> The Inquirer npm package enables customers to be prompted for their desired purchase once Node is running. The My-Sql module allows for querying the Bamazon database via JavaScript based on the product ID(s) and quantities customers type when making purchases. Lastly, the Colors npm package is also used to give customers a more visually appealing experience.</p>
 
 <p>Here's a brief video demonstration of how the app works: https://drive.google.com/drive/my-drive</p>
 
